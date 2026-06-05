@@ -58,6 +58,7 @@ make dataset    # generate test pcaps (requires scapy)
 ```bash
 wrangler pages deploy web/
 ```
+or any deploy way you want to
 
 ## Dataset scenarios
 
