@@ -156,16 +156,25 @@ def scenario_04():
 
 # ── Scenario 5: Server Unreachable ───────────────────────────────────────────
 def scenario_05():
-    pkts = []
-    # Клиент шлёт Discover, никто не отвечает (ретрансмиты через 2, 4, 8 сек)
+    from scapy.utils import PcapWriter
+    # Client sends Discover, no one replies (retransmits at 2, 6, 14 sec)
+    # Use PcapWriter to preserve real timestamps
+    timed = []
+    base = 1700000000.0
     for cmac in ["aa:bb:cc:dd:ee:01", "aa:bb:cc:dd:ee:02"]:
         tx = xid()
         for delay in [0.0, 2.0, 6.0, 14.0]:
-            pkts.append(dhcp_discover(cmac, tx, delay))
+            pkt = dhcp_discover(cmac, tx, delay)
+            timed.append((base + delay, pkt))
+
     path = f"{OUT}/05-server-unreachable"
     os.makedirs(path, exist_ok=True)
-    wrpcap(f"{path}/capture.pcap", pkts)
-    print(f"[+] 05-server-unreachable: {len(pkts)} packets")
+    fpath = f"{path}/capture.pcap"
+    with PcapWriter(fpath, sync=True) as pw:
+        for ts, pkt in timed:
+            pkt.time = ts
+            pw.write(pkt)
+    print(f"[+] 05-server-unreachable: {len(timed)} packets")
 
 # ── Scenario 6: IP Conflict ───────────────────────────────────────────────────
 def scenario_06():
