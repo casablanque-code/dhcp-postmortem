@@ -5,6 +5,8 @@
 A Rust/WASM tool for post-mortem analysis of DHCP traffic captures.
 Drop a `.pcap` or `.pcapng` file — get a full forensic report in your browser.
 
+**Live demo: https://dhcp.postmortem.casablanque.com/**
+
 ## What it detects
 
 | Anomaly | Description |
